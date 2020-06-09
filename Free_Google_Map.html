@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+   <style>
+      #googleMap>div:last-of-type{
+         display:none;
+      }
+      div.gm-style div div div div div img{
+         display:none;
+      }
+      div.gm-style div div div div div img:not([src*="googleapis"]){
+         display:block !important;
+      }
+      div.gm-style div div div div div img.loading-finished{
+         display:block;
+      }
+   </style>
+   <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+      <script src = "https://maps.googleapis.com/maps/api/js"></script>
+      <script>
+         $(function() {
+
+            // loadnewimg();
+            
+         });
+      </script>
+      <script>
+         var myCenter = new google.maps.LatLng(17.433053, 78.412172);
+         function loadnewimg() {
+            regex = /!\di\d{6,}!/gi;
+            $('div.gm-style div div div div div img').each(function(){
+               if($(this).attr('src').match(regex) != null) {
+                  $(this).attr('src', $(this).attr('src').substring(0,Number($(this).attr('src').indexOf($(this).attr('src').match(regex)[$(this).attr('src').match(regex).length-1]))+Number($(this).attr('src').match(regex)[$(this).attr('src').match(regex).length-1].length))+'!3m12!2szh-TW!3sUS!5e18!12m4!1e68!2m2!1sset!2sRoadmap!12m3!1e37!2m1!1ssmartmaps!4e0!5m1!5f2&token=' + Math.random()*100000);
+                  $(this).addClass('loading-finished');
+               }
+               
+            })
+         }
+         function loadMap(){
+			
+            var mapProp = {
+               center: myCenter,
+               zoom:5,
+               mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            
+            var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+            // 
+            var marker = new google.maps.Marker({
+               position: myCenter,
+               title:'Click to zoom'
+            });
+            
+            marker.setMap(map);
+            mapevent = google.maps.event;
+            // console.log(mapevent);
+            //Zoom to 7 when clicked on marker
+            mapevent.addListener(marker,'click',function() {
+               map.setZoom(9);
+               map.setCenter(marker.getPosition());
+            });
+
+            mapevent.addListener(map,'tilesloaded',function() {
+               loadnewimg();
+
+            });
+            mapevent.addListener(map,'idle',function() {
+               loadnewimg();
+            });
+            
+         }
+
+      </script>
+      
+   </head>
+   
+   <body onload = "loadMap();">
+      <div id = "googleMap" style = "height:97vh;"></div>
+   </body>
+   
+</html>
